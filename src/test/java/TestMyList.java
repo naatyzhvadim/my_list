@@ -1,5 +1,9 @@
 import org.junit.Test;
 
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Iterator;
+
 public class TestMyList {
     @Test
     public void test_0() {

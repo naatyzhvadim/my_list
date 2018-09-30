@@ -46,6 +46,13 @@ public class DoubleConList<T> implements java.util.List<T>{
     DoubleConList(){
     }
 
+    DoubleConList(Collection<T> collection){
+        Iterator<T> iterator = collection.iterator();
+        while(iterator.hasNext()){
+            add(iterator.next());
+        }
+    }
+
     @Override
     public int size() {
         return listSize;
