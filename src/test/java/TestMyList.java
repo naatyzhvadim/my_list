@@ -27,4 +27,12 @@ public class TestMyList {
         //System.out.println(op.indexOf(5));
         assert op.indexOf(5) == 3;
     }
+    @Test
+    public void test_2() {
+        DoubleConList<Integer> op = new DoubleConList<>();
+        op.add(1);
+        op.add(2);
+        op.add(0);
+        assert op.contains(0);
+    }
 }

@@ -26,17 +26,17 @@ public class ImpQueue<T> implements java.util.Queue<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
@@ -51,32 +51,32 @@ public class ImpQueue<T> implements java.util.Queue<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public void clear() {
-
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean offer(T t) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override

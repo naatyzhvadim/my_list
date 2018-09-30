@@ -12,14 +12,35 @@ public class DoubleConList<T> implements java.util.List<T>{
         MyNode(T tmp){
             value = tmp;
         }
+        public T getValue(){
+            return value;
+        }
+
+        public MyNode<T> getNext() {
+            return next;
+        }
+
+        public MyNode<T> getPrev() {
+            return prev;
+        }
+
+        public void setValue(T val){
+            value = val;
+        }
+        public void setNext(MyNode<T> nxt){
+            next = nxt;
+        }
+        public void setPrev(MyNode<T> prv){
+            prev = prv;
+        }
     }
 
-    private MyNode<T> head = null;
-    private int list_size = 0;
+    private MyNode<T> head = null, tail = null, mid = null;
+    private int listSize = 0, mid_i = 0;
 
     DoubleConList(T tmp){
-        head = new MyNode<>(tmp);
-        ++list_size;
+        mid = tail = head = new MyNode<>(tmp);
+        ++listSize;
     }
 
     DoubleConList(){
@@ -27,170 +48,243 @@ public class DoubleConList<T> implements java.util.List<T>{
 
     @Override
     public int size() {
-        return list_size;
+        return listSize;
     }
 
     @Override
     public boolean isEmpty() {
-        return list_size == 0;
+        return listSize == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        MyNode<T> cur_node = head;
-        int flag = 0;
-        while(cur_node != null){
-            if (o == null? cur_node.value == null : o.equals(cur_node.value)) {
-                ++flag;
-                break;
-            }
-            cur_node = cur_node.next;
+        MyNode<T> curNode = head;
+        while(curNode != null && (o == null? curNode.value != null : !o.equals(curNode.value))){
+            curNode = curNode.next;
         }
-        return flag == 1;
+        return curNode != null;
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public void forEach(Consumer<? super T> action) {
-
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean add(T t) {
         if (head == null){
-            head = new MyNode<>(t);
-            ++list_size;
+            mid = tail = head = new MyNode<>(t);
+            ++listSize;
         } else {
-            MyNode<T> cur_node = head;
-            while (cur_node.next != null)
-                cur_node = cur_node.next;
-            MyNode<T> last_node = new MyNode<>(t);
-            cur_node.next = last_node;
-            last_node.prev = cur_node;
-            ++list_size;
+            MyNode<T> lastNode = new MyNode<>(t);
+            tail.next = lastNode;
+            lastNode.prev = tail;
+            tail = tail.next;
+            ++listSize;
+            updateMid();
         }
         return true;
+    }
+
+    public int getMid_i() {
+        return mid_i;
+    }
+
+    public T getMid() {
+        return mid.value;
+    }
+
+    private void updateMid(){
+        if (listSize == 0 || listSize == 1){
+            mid = head;
+            mid_i = 0;
+        }
+        int sub = (listSize - 1)/2  - mid_i;
+        if (sub == 0) {
+            return;
+        }
+        for (int i = 0; i < Math.abs(sub); ++i){
+            if (sub > 0){
+                mid = mid.next;
+            }else{
+                mid = mid.prev;
+            }
+        }
+        mid_i = (listSize - 1)/2;
     }
 
     @Override
     public boolean remove(Object o) {
-        if (!contains(o))
+        if (!contains(o)) {
             return false;
-        MyNode<T> cur_node = head, prev_node = null, next_node;
+        }
+        MyNode<T> curNode = head, prevNode, nextNode;
         int i = 0;
-        while(cur_node != null){
-            if (o == null? cur_node.value == null : o.equals(cur_node.value))
-                break;
-            cur_node = cur_node.next;
+        while(o == null? curNode.value != null : !o.equals(curNode.value)){
+            curNode = curNode.next;
             ++i;
         }
         if (i == 0) {
-            remove_first();
+            --mid_i;
+            removeFirst();
             return true;
         }
-        prev_node = cur_node.prev;
-        next_node = cur_node.next;
-        prev_node.next = next_node;
-        if (next_node != null){
-            next_node.prev = prev_node;
+        if (i == listSize - 1){
+            removeLast();
+            return true;
         }
-        cur_node.prev = null;
-        cur_node.next = null;
-        --list_size;
+        if (i == mid_i){
+            removeMiddle();
+            return true;
+        }
+        prevNode = curNode.prev;
+        nextNode = curNode.next;
+        prevNode.next = nextNode;
+        nextNode.prev = prevNode;
+        curNode.prev = null;
+        curNode.next = null;
+        --listSize;
+        if (i < mid_i) {
+            --mid_i;
+        }
+        updateMid();
         return true;
     }
 
+    private T removeLast(){
+        MyNode<T> node = tail;
+        T val = tail.value;
+        tail = tail.prev;
+        tail.next = null;
+        node.prev = null;
+        --listSize;
+        updateMid();
+        return val;
+    }
+
+
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean removeIf(Predicate<? super T> filter) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public void replaceAll(UnaryOperator<T> operator) {
-
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public void sort(Comparator<? super T> c) {
-
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public void clear() {
-
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public T get(int index) {
-        if (index < 0 || index >= list_size)
+        if (index < 0 || index >= listSize) {
             throw new IndexOutOfBoundsException("Index is out of range");
-        MyNode<T> cur_node = head;
-        int i = 0;
-        while (i != index){
-            cur_node = cur_node.next;
-            ++i;
         }
-        return cur_node.value;
+        MyNode<T> curNode = findNode(index);
+        return curNode.value;
+    }
+
+    private MyNode<T> findNode(int index){
+        MyNode<T> curNode;
+        int i;
+        boolean dest;
+        if (index < mid_i){
+            if (index < mid_i - index){
+                curNode = head;
+                dest = true;
+                i = 0;
+            }else{
+                curNode = mid;
+                dest = false;
+                i = mid_i;
+            }
+        }else{
+            if (index - mid_i < listSize - mid_i){
+                curNode = mid;
+                dest = true;
+                i = mid_i;
+            }else{
+                curNode = tail;
+                dest = false;
+                i = listSize - 1;
+            }
+        }
+        while (i != index){
+            if (dest){
+                curNode = curNode.next;
+                ++i;
+            }else{
+                curNode = curNode.prev;
+                --i;
+            }
+        }
+        return curNode;
     }
 
     @Override
     public T set(int index, T element) {
-        if (index < 0 || index >= list_size)
+        if (index < 0 || index >= listSize) {
             throw new IndexOutOfBoundsException("Index is out of range");
-        MyNode<T> cur_node = head;
-        int i = 0;
-        while (i != index){
-            cur_node = cur_node.next;
-            ++i;
         }
-        cur_node.value = element;
+        MyNode<T> curNode = findNode(index);
+        curNode.value = element;
         return element;
     }
 
     @Override
     public void add(int index, T element) {
-        if (index > list_size || index < 0)
+        if (index > listSize || index < 0) {
             throw new IndexOutOfBoundsException("Index is out of range");
-        if (index == list_size) {
+        }
+        if (index == listSize) {
             add(element);
             return;
         }
@@ -200,30 +294,49 @@ public class DoubleConList<T> implements java.util.List<T>{
             node.prev = null;
             head.prev = node;
             head = node;
-            ++list_size;
+            ++listSize;
+            ++mid_i;
+            updateMid();
             return;
         }
-        MyNode<T> cur_node = head.next, prev_node = head, node = new MyNode<>(element);
-        int i = 1;
-        while (i != index){
-            prev_node = cur_node;
-            cur_node = cur_node.next;
-            ++i;
+        MyNode<T> curNode = findNode(index), prevNode, node = new MyNode<>(element);
+        prevNode = curNode.prev;
+        prevNode.next = node;
+        node.prev = prevNode;
+        node.next = curNode;
+        curNode.prev = node;
+        ++listSize;
+        if (index <= mid_i){
+            ++mid_i;
         }
-        prev_node.next = node;
-        node.prev = prev_node;
-        node.next = cur_node;
-        cur_node.prev = node;
-        ++list_size;
+        updateMid();
     }
 
-    private T remove_first(){
+    private T removeFirst(){
         MyNode<T> node = head;
         head = head.next;
+        if (listSize == 1){
+            tail = mid = head;
+        }
         T val = node.value;
         node.prev = null;
         node.next = null;
-        --list_size;
+        --listSize;
+        updateMid();
+        return val;
+    }
+
+
+    private T removeMiddle(){
+        MyNode<T> prevNode = mid.prev, nextNode = mid.next;
+        prevNode.next = nextNode;
+        nextNode.prev = prevNode;
+        --listSize;
+        T val = mid.value;
+        mid.next = null;
+        mid.prev = null;
+        mid = nextNode;
+        updateMid();
         return val;
     }
 
@@ -234,33 +347,42 @@ public class DoubleConList<T> implements java.util.List<T>{
             node = node.next;
         }
         System.out.println();
+        if (head != null) {
+            System.out.println("Head " + head.value);
+            System.out.println("MId " + mid.value + "   " + mid_i);
+            System.out.println("Tail " + tail.value);
+        }
     }
     @Override
     public T remove(int index) {
-        if (index >= list_size || index < 0)
+        if (index >= listSize || index < 0) {
             throw new IndexOutOfBoundsException("Index is out of range");
-
+        }
         if (index == 0) {
-            return remove_first();
+            --mid_i;
+            return removeFirst();
+        }
+        if (index == listSize - 1){
+            return removeLast();
+        }
+        if (index == mid_i){
+            return removeMiddle();
         }
 
-        MyNode<T> cur_node = head;
-        for(int i = 0; i < index; ++i)
-            cur_node = cur_node.next;
-        System.out.println("This is cur_node " + cur_node.value);
-        MyNode<T> prev_node = cur_node.prev;
-        MyNode<T> next_node = cur_node.next;
-        prev_node.next = next_node;
-        if (next_node != null)
-            next_node.prev = prev_node;
-
-        --list_size;
-        T removed_val = cur_node.value;
-        cur_node.next = null;
-        cur_node.prev = null;
-        cur_node.value = null;
-
-        return removed_val;
+        MyNode<T> curNode = findNode(index);
+        MyNode<T> prevNode = curNode.prev, nextNode = curNode.next;
+        prevNode.next = nextNode;
+        nextNode.prev = prevNode;
+        --listSize;
+        T removedVal = curNode.value;
+        curNode.next = null;
+        curNode.prev = null;
+        curNode.value = null;
+        if (index < mid_i){
+            --mid_i;
+        }
+        updateMid();
+        return removedVal;
     }
 
     @Override
@@ -268,10 +390,10 @@ public class DoubleConList<T> implements java.util.List<T>{
         if (!contains(o)){
             return -1;
         }
-        MyNode<T> cur_node = head;
+        MyNode<T> curNode = head;
         int i = 0;
-        while(o == null? cur_node.value != null : !o.equals(cur_node.value)){
-            cur_node = cur_node.next;
+        while(o == null? curNode.value != null : !o.equals(curNode.value)){
+            curNode = curNode.next;
             ++i;
         }
         return i;
@@ -282,45 +404,44 @@ public class DoubleConList<T> implements java.util.List<T>{
         if (!contains(o)){
             return -1;
         }
-        MyNode<T> cur_node = head;
-        int i = 0, last = 0;
-        while(cur_node != null) {
-            if (o == null ? cur_node.value == null : o.equals(cur_node.value))
-                last = i;
-            ++i;
-            cur_node = cur_node.next;
+        MyNode<T> curNode = tail;
+        int i;
+        i = listSize - 1;
+        while(o == null ? curNode.value != null : !o.equals(curNode.value)) {
+            --i;
+            curNode = curNode.prev;
         }
-        return last;
+        return i;
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public Spliterator<T> spliterator() {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public Stream<T> stream() {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     @Override
     public Stream<T> parallelStream() {
-        return null;
+        throw new UnsupportedOperationException("This operation is unsupported");
     }
 
     public static void main(String[] args) {
@@ -333,21 +454,8 @@ public class DoubleConList<T> implements java.util.List<T>{
         op.add(0, 0);
         op = new DoubleConList<>();
         op.add(0, 7);
-
         op.print_list();
-        /*System.out.println("Before");
-        op.print_list();
-        System.out.println(op.remove(3));
-        System.out.println("After");
-        op.print_list();*/
         System.out.println(op.size());
 
-        /*LinkedList<Integer> util_list = new LinkedList<>();
-        System.out.println(util_list.add(null));
-        System.out.println(util_list.add(5));
-        System.out.println(util_list.getFirst());
-        System.out.println(util_list.remove(1));*/
-
-        //util_list.listIterator()
     }
 }
